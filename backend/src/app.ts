@@ -60,7 +60,7 @@ app.use('/api/dashboard', dashboardRoutes(dashboardController));
 app.use('/api/scoring', returnRoutes(returnController));
 initAlertSocket(io);
 app.use(errorHandler);
-const PORT=process.env.PORT||5000;
+const PORT=process.env.PORT||3001;
 connectDB().then(()=>{
   server.listen(PORT, ()=>{
     console.log(`Server running on port ${PORT}`);

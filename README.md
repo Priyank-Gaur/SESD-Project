@@ -39,7 +39,7 @@ npm run seed
 npm run dev
 ```
 
-Backend runs on `http://localhost:5000`
+Backend runs on `http://localhost:3001`
 
 ### ML Service Setup
 
