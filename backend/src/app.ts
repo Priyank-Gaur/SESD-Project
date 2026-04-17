@@ -52,7 +52,7 @@ const clusterService=new ClusterService(userRepo);
 const authController=new AuthController(authService);
 const returnController=new ReturnController(returnService, scoringService);
 const orderController=new OrderController(orderRepo);
-const dashboardController=new DashboardController(returnRepo, fraudScoreRepo, clusterService);
+const dashboardController=new DashboardController(returnRepo, fraudScoreRepo, clusterService, scoringService);
 app.use('/api/auth', authRoutes(authController));
 app.use('/api/returns', returnRoutes(returnController));
 app.use('/api/orders', orderRoutes(orderController));

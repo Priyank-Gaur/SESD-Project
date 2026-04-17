@@ -1,44 +1,100 @@
 import React from 'react';
-export default function FraudScoreCard({returnData, scoreData, onDecision}) {
+
+export default function FraudScoreCard({returnData, scoreData, onDecision, onClose}) {
   const getRiskColor=(level)=>{
-    if (level==='HIGH') return '#ef4444';
-    if (level==='MEDIUM') return '#f59e0b';
-    return '#22c55e';
+    if (level==='HIGH') return 'var(--danger)';
+    if (level==='MEDIUM') return 'var(--warning)';
+    return 'var(--success)';
   };
+
   return (
-    <div style={{background:'#1a1a2e',padding:24,borderRadius:12,border:'1px solid #2a2a4a',marginTop:16}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+    <div className="chart-container" style={{padding: '32px', position: 'relative'}}>
+      <button 
+        onClick={onClose}
+        style={{
+          position: 'absolute', right: '16px', top: '16px',
+          background: 'transparent', color: 'var(--text-dim)',
+          fontSize: '20px', cursor: 'pointer'
+        }}
+      >
+        &times;
+      </button>
+
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'32px'}}>
         <div>
-          <h3 style={{color:'#fff',fontSize:18}}>Return Details</h3>
-          <p style={{color:'#888',fontSize:13}}>ID: {returnData._id}</p>
+          <h3 className="chart-title" style={{marginBottom: '4px'}}>Analysis for Return #{returnData._id.slice(-6).toUpperCase()}</h3>
+          <p style={{color:'var(--text-dim)', fontSize:'14px'}}>Method: {scoreData.strategy.toUpperCase()}</p>
         </div>
         <div style={{textAlign:'right'}}>
-          <div style={{fontSize:42,fontWeight:700,color:getRiskColor(scoreData.riskLevel)}}>{scoreData.score}</div>
-          <span className={`badge badge-${scoreData.riskLevel.toLowerCase()}`}>{scoreData.riskLevel} RISK</span>
+          <div style={{fontSize: '48px', fontWeight: 800, color: getRiskColor(scoreData.riskLevel), lineHeight: 1}}>
+            {Number(scoreData.score).toFixed(0)}%
+          </div>
+          <span className={`badge badge-${scoreData.riskLevel.toLowerCase()}`} style={{marginTop: '8px', display: 'inline-block'}}>
+            {scoreData.riskLevel} RISK
+          </span>
         </div>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:20}}>
-        <div><span style={{color:'#888',fontSize:12}}>Reason:</span> <span style={{color:'#ccc'}}>{returnData.reason}</span></div>
-        <div><span style={{color:'#888',fontSize:12}}>Strategy:</span> <span style={{color:'#ccc'}}>{scoreData.strategy}</span></div>
-        <div><span style={{color:'#888',fontSize:12}}>Status:</span> <span style={{color:'#ccc',textTransform:'capitalize'}}>{returnData.status}</span></div>
-        <div><span style={{color:'#888',fontSize:12}}>Decision:</span> <span style={{color:'#ccc',textTransform:'capitalize'}}>{returnData.decision}</span></div>
+
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'24px', marginBottom:'40px'}}>
+        <div className="stat-card" style={{padding: '16px'}}>
+          <h3 style={{fontSize: '11px'}}>Return Reason</h3>
+          <div style={{color: 'var(--text-main)', fontWeight: 600}}>{returnData.reason}</div>
+        </div>
+        <div className="stat-card" style={{padding: '16px'}}>
+          <h3 style={{fontSize: '11px'}}>Current Status</h3>
+          <div style={{color: 'var(--text-main)', fontWeight: 600, textTransform: 'capitalize'}}>{returnData.status}</div>
+        </div>
       </div>
-      <div className="signal-breakdown">
-        <div style={{fontWeight:600,marginBottom:12,color:'#aaa',fontSize:13}}>Signal Breakdown</div>
-        {scoreData.signalBreakdown.map((signal, i)=>(
-          <div key={i} className="signal-row">
-            <span style={{width:160}} className={signal.fired?'signal-fired':'signal-not-fired'}>{signal.signalName}</span>
-            <div className="signal-bar">
-              <div className="signal-bar-fill" style={{width:`${(signal.contribution/signal.weight)*100}%`,background:signal.fired?'#ef4444':'#2a2a4a'}}/>
+
+      <div className="signal-breakdown" style={{marginBottom: '40px'}}>
+        <h3 style={{fontSize:'14px', fontWeight: 700, marginBottom: '20px', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
+          Risk Signal Indicators
+        </h3>
+        {scoreData.signalBreakdown.map((signal, i)=>{
+          // Brief descriptions to make indicators easily understandable for operators.
+          const descriptions = {
+            'Velocity Check': 'Detects an unusually high frequency of return requests from this account within a very short timeframe.',
+            'Cluster Match': 'Identifies if this account shares attributes (like address or device IDs) with a previously identified fraudulent network.',
+            'Return Window': 'Flags if returns are systematically being initiated exactly at the absolute limit of the allowed grace period.',
+            'default': 'Contributes toward overall risk determination based on historical anomalous behavior trends.'
+          };
+          const desc = descriptions[signal.signalName] || descriptions['default'];
+
+          return (
+          <div key={i} className="signal-row" style={{marginBottom: '16px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
+              <span style={{fontWeight: 600, color: signal.fired ? 'var(--text-main)' : 'var(--text-dim)'}}>
+                {signal.signalName}
+              </span>
+              <span style={{color: signal.fired ? 'var(--danger)' : 'var(--text-dim)', fontWeight: 700}}>
+                {signal.fired ? `+${signal.contribution}` : '0'} / {signal.weight}
+              </span>
             </div>
-            <span style={{width:60,textAlign:'right',color:signal.fired?'#ef4444':'#666'}}>{signal.contribution}/{signal.weight}</span>
+            <div style={{fontSize: '12px', color: 'var(--text-dim)', marginBottom: '8px', lineHeight: 1.4}}>
+              {desc}
+            </div>
+            <div className="signal-bar" style={{height: '8px', background: 'rgba(255,255,255,0.05)'}}>
+              <div 
+                className="signal-bar-fill" 
+                style={{
+                  width: `${(signal.contribution/signal.weight)*100}%`,
+                  background: signal.fired ? 'var(--danger)' : 'transparent',
+                  boxShadow: signal.fired ? '0 0 10px rgba(244, 63, 94, 0.3)' : 'none'
+                }}
+              />
+            </div>
           </div>
-        ))}
+        )})}
       </div>
-      {returnData.status==='pending'&&(
-        <div style={{display:'flex',gap:12,marginTop:20}}>
-          <button className="btn btn-success" onClick={()=>onDecision(returnData._id, 'approved')}>Approve</button>
-          <button className="btn btn-danger" onClick={()=>onDecision(returnData._id, 'rejected')}>Reject</button>
+
+      {returnData.status === 'pending' && (
+        <div style={{display:'flex', gap:'16px'}}>
+          <button className="btn btn-success" style={{flex: 1, padding: '16px'}} onClick={()=>onDecision(returnData._id, 'approved')}>
+            Approve Return
+          </button>
+          <button className="btn btn-danger" style={{flex: 1, padding: '16px'}} onClick={()=>onDecision(returnData._id, 'rejected')}>
+            Reject as Fraudulent
+          </button>
         </div>
       )}
     </div>

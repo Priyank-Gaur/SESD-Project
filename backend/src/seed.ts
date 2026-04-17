@@ -89,6 +89,25 @@ async function seed() {
       reason,
       requestedAt: new Date(Date.now()-Math.floor(Math.random()*14)*24*60*60*1000)
     });
+    
+    // Generate a dummy fraud score so the UI can render it.
+    const riskLevel = i % 5 === 0 ? 'HIGH' : i % 3 === 0 ? 'MEDIUM' : 'LOW';
+    const score = riskLevel === 'HIGH' ? 85 : riskLevel === 'MEDIUM' ? 55 : 15;
+    
+    await mongoose.connection.collection('fraudscores').insertOne({
+      returnId: returnDoc._id,
+      score: score,
+      riskLevel: riskLevel,
+      strategy: 'rule-based',
+      signalBreakdown: [
+        { signalName: 'Velocity Check', fired: riskLevel === 'HIGH', contribution: 30, weight: 30 },
+        { signalName: 'Cluster Match', fired: riskLevel !== 'LOW', contribution: 25, weight: 25 },
+        { signalName: 'Return Window', fired: false, contribution: 0, weight: 15 }
+      ],
+      createdAt: returnDoc.requestedAt,
+      updatedAt: returnDoc.requestedAt
+    });
+
     returns.push(returnDoc);
   }
   console.log(`Created ${returns.length} returns`);

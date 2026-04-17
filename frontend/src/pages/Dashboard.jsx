@@ -17,6 +17,9 @@ export default function Dashboard() {
     try {
       const res=await api.get('/dashboard/stats');
       setStats(res.data);
+      if (res.data.strategy) {
+        setStrategy(res.data.strategy);
+      }
     } catch (err) {
       console.error('Failed to fetch stats');
     }
@@ -24,8 +27,8 @@ export default function Dashboard() {
   const toggleStrategy=async ()=>{
     const newStrategy=strategy==='rule-based'?'ml':'rule-based';
     try {
-      await api.post('/scoring/toggle', {strategy: newStrategy});
-      setStrategy(newStrategy);
+      const res = await api.post('/scoring/toggle', {strategy: newStrategy});
+      setStrategy(res.data.activeStrategy);
     } catch (err) {
       console.error('Failed to toggle strategy');
     }

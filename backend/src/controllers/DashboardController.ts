@@ -2,11 +2,14 @@ import {Request, Response} from 'express';
 import {ReturnRepository} from '../repositories/ReturnRepository';
 import {FraudScoreRepository} from '../repositories/FraudScoreRepository';
 import {ClusterService} from '../services/ClusterService';
+import {ScoringService} from '../services/ScoringService';
+
 export class DashboardController {
   constructor(
     private returnRepo: ReturnRepository,
     private fraudScoreRepo: FraudScoreRepository,
-    private clusterService: ClusterService
+    private clusterService: ClusterService,
+    private scoringService: ScoringService
   ) {}
   getStats=async (_req: Request, res: Response): Promise<void>=>{
     try {
@@ -16,7 +19,8 @@ export class DashboardController {
       const rejected=await this.returnRepo.countByStatus('rejected');
       const highRisk=await this.fraudScoreRepo.countByRiskLevel('HIGH');
       const fraudRate=totalReturns>0?Math.round((highRisk/totalReturns)*100):0;
-      res.status(200).json({totalReturns, pending, approved, rejected, highRisk, fraudRate});
+      const strategy=this.scoringService.getActiveStrategy();
+      res.status(200).json({totalReturns, pending, approved, rejected, highRisk, fraudRate, strategy});
     } catch {
       res.status(500).json({error: 'Failed to fetch stats'});
     }
