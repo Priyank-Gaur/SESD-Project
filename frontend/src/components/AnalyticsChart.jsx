@@ -3,8 +3,14 @@ import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 export default function AnalyticsChart({signalData, trendData}) {
   return (
     <div>
-      <div className="chart-container">
-        <div className="chart-title">Signal Frequency</div>
+      <div className="chart-container" style={{marginBottom: 32}}>
+        <div>
+          <h3 className="chart-title" style={{marginBottom: 4}}>Risk Signal Frequency</h3>
+          <p style={{color: 'var(--text-dim)', fontSize: 13, marginBottom: 24, maxWidth: 600}}>
+            A breakdown of how often specific risk indicators are triggered during return requests. 
+            High spikes highlight the most prevalent fraudulent tactics currently being used against the platform.
+          </p>
+        </div>
         {signalData&&signalData.length>0?(
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={signalData}>
@@ -18,7 +24,13 @@ export default function AnalyticsChart({signalData, trendData}) {
         ):<div className="chart-empty">No signal data available</div>}
       </div>
       <div className="chart-container">
-        <div className="chart-title">Fraud Rate Trend (Last 30 Days)</div>
+        <div>
+          <h3 className="chart-title" style={{marginBottom: 4}}>Fraud Rate Trend (Last 30 Days)</h3>
+          <p style={{color: 'var(--text-dim)', fontSize: 13, marginBottom: 24, maxWidth: 600}}>
+            Tracks the total volume of returns (purple) against those flagged as severe high-risk fraud (red). 
+            This demonstrates the effectiveness of the scoring engine in actively identifying abuse over time.
+          </p>
+        </div>
         {trendData&&trendData.length>0?(
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={trendData}>

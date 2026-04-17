@@ -23,11 +23,26 @@ export default function Analytics() {
     }
   };
   return (
-    <div>
-      <h1 className="page-title">Analytics</h1>
+    <div className="analytics-page">
+      <h1 className="page-title" style={{marginBottom: 8}}>Analytics Overview</h1>
+      <p style={{color: 'var(--text-dim)', marginBottom: 32, fontSize: 14}}>
+        Comprehensive visualization of risk signals, fraud trends, and interconnected return networks across the platform.
+      </p>
+
       <AnalyticsChart signalData={signalData} trendData={trendData}/>
-      <div className="chart-container">
-        <div className="chart-title">Fraud Ring Clusters</div>
+
+      <div className="chart-container" style={{marginTop: 32}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16}}>
+          <div>
+            <h3 className="chart-title" style={{marginBottom: 4}}>Fraud Ring Clusters</h3>
+            <p style={{color: 'var(--text-dim)', fontSize: 13, maxWidth: 600}}>
+              This graph maps out connections between seemingly independent customer accounts. 
+              Accounts linked by a solid purple line share a <strong>physical shipping address</strong>, 
+              while a dashed red line indicates they share the exact same <strong>device fingerprint</strong>. 
+              Highly interconnected nodes represent organized fraudulent networks.
+            </p>
+          </div>
+        </div>
         <ClusterGraph data={clusterData}/>
       </div>
     </div>
