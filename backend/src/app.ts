@@ -27,12 +27,18 @@ import dashboardRoutes from './routes/dashboardRoutes';
 import {initAlertSocket} from './socket/alertSocket';
 import {errorHandler} from './middleware/errorHandler';
 dotenv.config();
+// Safely format the CLIENT_URL to prevent trailing slash CORS mismatches
+let clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+if (clientUrl.endsWith('/')) {
+  clientUrl = clientUrl.slice(0, -1);
+}
+
 const app=express();
 const server=http.createServer(app);
 const io=new SocketIOServer(server, {
-  cors: {origin: process.env.CLIENT_URL||'http://localhost:3000', methods: ['GET','POST','PATCH']}
+  cors: {origin: clientUrl, methods: ['GET','POST','PATCH']}
 });
-app.use(cors({origin: process.env.CLIENT_URL||'http://localhost:3000'}));
+app.use(cors({origin: clientUrl}));
 app.use(express.json());
 const userRepo=new UserRepository();
 const orderRepo=new OrderRepository();
