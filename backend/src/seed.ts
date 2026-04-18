@@ -90,7 +90,6 @@ async function seed() {
       requestedAt: new Date(Date.now()-Math.floor(Math.random()*14)*24*60*60*1000)
     });
     
-    // Generate a dummy fraud score so the UI can render it.
     const riskLevel = i % 5 === 0 ? 'HIGH' : i % 3 === 0 ? 'MEDIUM' : 'LOW';
     const score = riskLevel === 'HIGH' ? 85 : riskLevel === 'MEDIUM' ? 55 : 15;
     

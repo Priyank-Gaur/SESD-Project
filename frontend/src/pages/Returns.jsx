@@ -25,12 +25,11 @@ export default function Returns() {
   };
 
   const handleSelect=async (returnId)=>{
-    setSelectedReturn(null); // Clear previous selection while loading
+    setSelectedReturn(null);
     try {
       const res=await api.get(`/returns/${returnId}`);
       setSelectedReturn(res.data.return);
       setScoreData(res.data.fraudScore);
-      // Scroll to details segment smoothly after component mounts
       setTimeout(() => {
         document.getElementById('details-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);

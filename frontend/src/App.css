@@ -50,13 +50,14 @@
 .nav-link.active {
   background: var(--primary);
   color: white;
+  font-weight: 600;
 }
 
 .logout-btn {
   margin-top: auto;
   padding: 14px;
   background: transparent;
-  border: 1px solid rgba(244, 63, 94, 0.2);
+  border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
   color: var(--danger);
   border-radius: 12px;
   font-weight: 600;
@@ -104,7 +105,7 @@
 
 .stat-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(99, 102, 241, 0.3);
+  border-color: var(--text-dim);
 }
 
 .stat-card h3 {
@@ -122,9 +123,17 @@
   color: var(--text-main);
 }
 
-.stat-card .stat-value.high { color: var(--danger); }
-.stat-card .stat-value.medium { color: var(--warning); }
-.stat-card .stat-value.low { color: var(--success); }
+.stat-card .stat-value.high {
+  color: var(--danger);
+}
+
+.stat-card .stat-value.medium {
+  color: var(--warning);
+}
+
+.stat-card .stat-value.low {
+  color: var(--success);
+}
 
 /* Table and Data Visualization */
 .table-container {
@@ -172,9 +181,23 @@ tr:hover {
   text-transform: uppercase;
 }
 
-.badge-high { background: rgba(244, 63, 94, 0.1); color: var(--danger); }
-.badge-medium { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-.badge-low { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.badge-high {
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+.badge-medium {
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
+  border: 1px solid color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+.badge-low {
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
+}
 
 .btn {
   padding: 10px 20px;
@@ -185,11 +208,25 @@ tr:hover {
   font-size: 14px;
 }
 
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-hover); }
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
 
-.btn-success { background: var(--success); color: white; }
-.btn-danger { background: var(--danger); color: white; }
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
 
 .chart-container {
   background: var(--card-bg);
@@ -295,8 +332,8 @@ input {
 input:focus {
   outline: none;
   border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  background: color-mix(in srgb, var(--text-main) 4%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--text-dim) 10%, transparent);
 }
 
 .login-btn {
@@ -307,8 +344,8 @@ input:focus {
 
 .error-alert {
   padding: 14px 18px;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.2);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
   border-radius: 12px;
   color: var(--danger);
   margin-bottom: 24px;

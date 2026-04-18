@@ -51,12 +51,10 @@ export default function FraudScoreCard({returnData, scoreData, onDecision, onClo
           Risk Signal Indicators
         </h3>
         {scoreData.signalBreakdown.map((signal, i)=>{
-          // Formatting camelCase properties to Title Case Strings
-          const formattedName = signal.signalName
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/^./, str => str.toUpperCase());
+          const formattedName = signal.signalName === 'ml_model' 
+            ? 'AI Probability Matrix' 
+            : signal.signalName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
-          // Full dictionary covering all 7 active backend signals
           const descriptions = {
             'returnVelocity': 'Detects an unusually high frequency of return requests from this account within a very short 30-day timeframe.',
             'timingPattern': 'Flags wardrobe-behavior: when returns are systematically initiated exactly at the absolute limit (days 28-30) of the allowed 30-day grace period.',
@@ -65,6 +63,7 @@ export default function FraudScoreCard({returnData, scoreData, onDecision, onClo
             'addressClustering': 'Identifies if this account shares identical physical shipping addresses with a cluster of 3 or more previously flagged accounts.',
             'deviceFingerprint': 'Flags severe risk when 2 or more separate accounts are initiating returns from the exact same physical device/browser fingerprint.',
             'reasonMismatch': 'Detects suspicious logical inconsistencies, such as claiming a sealed/unopened electronic item was "damaged" or "defective" upon arrival.',
+            'ml_model': 'Advanced deep-learning evaluation mapping multiple disjointed patterns to compute a holistic singular Risk Score.',
             'default': 'Contributes toward overall risk determination based on historically anomalous behavior trends.'
           };
           const desc = descriptions[signal.signalName] || descriptions['default'];
