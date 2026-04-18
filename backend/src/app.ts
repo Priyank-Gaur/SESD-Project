@@ -41,10 +41,15 @@ const fraudScoreRepo=new FraudScoreRepository();
 const ruleStrategy=new RuleBasedScoringStrategy(returnRepo, userRepo, orderRepo);
 const mlStrategy=new MLScoringStrategy(returnRepo, userRepo, orderRepo, process.env.ML_SERVICE_URL||'http://localhost:8000');
 const alertService=new AlertService();
-const wsObserver=new WebSocketAlertObserver(io);
+if (!process.env.VERCEL) {
+  const wsObserver=new WebSocketAlertObserver(io);
+  alertService.addObserver(wsObserver);
+  initAlertSocket(io);
+}
+
 const logObserver=new LogAlertObserver();
-alertService.addObserver(wsObserver);
 alertService.addObserver(logObserver);
+
 const authService=new AuthService(userRepo);
 const scoringService=new ScoringService(ruleStrategy, mlStrategy, fraudScoreRepo, returnRepo, alertService);
 const returnService=new ReturnService(returnRepo, orderRepo, scoringService);
@@ -53,18 +58,23 @@ const authController=new AuthController(authService);
 const returnController=new ReturnController(returnService, scoringService);
 const orderController=new OrderController(orderRepo);
 const dashboardController=new DashboardController(returnRepo, fraudScoreRepo, clusterService, scoringService);
+
 app.use('/api/auth', authRoutes(authController));
 app.use('/api/returns', returnRoutes(returnController));
 app.use('/api/orders', orderRoutes(orderController));
 app.use('/api/dashboard', dashboardRoutes(dashboardController));
 app.use('/api/scoring', returnRoutes(returnController));
-initAlertSocket(io);
+
 app.use(errorHandler);
-const PORT=process.env.PORT||3001;
-connectDB().then(()=>{
-  server.listen(PORT, ()=>{
-    console.log(`Server running on port ${PORT}`);
+if (process.env.VERCEL) {
+  connectDB();
+} else {
+  const PORT=process.env.PORT||3001;
+  connectDB().then(()=>{
+    server.listen(PORT, ()=>{
+      console.log(`Server running on port ${PORT}`);
+    });
   });
-});
+}
 
 export default app;
