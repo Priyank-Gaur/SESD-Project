@@ -51,12 +51,21 @@ export default function FraudScoreCard({returnData, scoreData, onDecision, onClo
           Risk Signal Indicators
         </h3>
         {scoreData.signalBreakdown.map((signal, i)=>{
-          // Brief descriptions to make indicators easily understandable for operators.
+          // Formatting camelCase properties to Title Case Strings
+          const formattedName = signal.signalName
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/^./, str => str.toUpperCase());
+
+          // Full dictionary covering all 7 active backend signals
           const descriptions = {
-            'Velocity Check': 'Detects an unusually high frequency of return requests from this account within a very short timeframe.',
-            'Cluster Match': 'Identifies if this account shares attributes (like address or device IDs) with a previously identified fraudulent network.',
-            'Return Window': 'Flags if returns are systematically being initiated exactly at the absolute limit of the allowed grace period.',
-            'default': 'Contributes toward overall risk determination based on historical anomalous behavior trends.'
+            'returnVelocity': 'Detects an unusually high frequency of return requests from this account within a very short 30-day timeframe.',
+            'timingPattern': 'Flags wardrobe-behavior: when returns are systematically initiated exactly at the absolute limit (days 28-30) of the allowed 30-day grace period.',
+            'priceThreshold': 'Triggers higher scrutiny automatically for exceptionally high-value or designer item claims (>$2,000 threshold).',
+            'accountAge': 'Identifies disposable accounts created recently (under 7 days) attempting immediate high-risk returns.',
+            'addressClustering': 'Identifies if this account shares identical physical shipping addresses with a cluster of 3 or more previously flagged accounts.',
+            'deviceFingerprint': 'Flags severe risk when 2 or more separate accounts are initiating returns from the exact same physical device/browser fingerprint.',
+            'reasonMismatch': 'Detects suspicious logical inconsistencies, such as claiming a sealed/unopened electronic item was "damaged" or "defective" upon arrival.',
+            'default': 'Contributes toward overall risk determination based on historically anomalous behavior trends.'
           };
           const desc = descriptions[signal.signalName] || descriptions['default'];
 
@@ -64,7 +73,7 @@ export default function FraudScoreCard({returnData, scoreData, onDecision, onClo
           <div key={i} className="signal-row" style={{marginBottom: '16px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
               <span style={{fontWeight: 600, color: signal.fired ? 'var(--text-main)' : 'var(--text-dim)'}}>
-                {signal.signalName}
+                {formattedName}
               </span>
               <span style={{color: signal.fired ? 'var(--danger)' : 'var(--text-dim)', fontWeight: 700}}>
                 {signal.fired ? `+${signal.contribution}` : '0'} / {signal.weight}

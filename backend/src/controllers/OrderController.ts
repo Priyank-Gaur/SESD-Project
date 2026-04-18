@@ -18,4 +18,12 @@ export class OrderController {
       res.status(500).json({error: 'Failed to fetch orders'});
     }
   };
+  getRandomOrder=async (_req: Request, res: Response): Promise<void>=>{
+    try {
+      const order=await this.orderRepo.getRandom();
+      res.status(200).json(order);
+    } catch {
+      res.status(500).json({error: 'Failed to fetch random order'});
+    }
+  };
 }

@@ -9,6 +9,11 @@ export class OrderRepository {
   async findByUserId(userId: string): Promise<IOrder[]> {
     return Order.find({userId});
   }
+  async getRandom(): Promise<IOrder|null> {
+    const count = await Order.countDocuments();
+    const random = Math.floor(Math.random() * count);
+    return Order.findOne().skip(random);
+  }
   async create(data: Partial<IOrder>): Promise<IOrder> {
     const order=new Order(data);
     return order.save();

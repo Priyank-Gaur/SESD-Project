@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Returns from './pages/Returns';
 import Analytics from './pages/Analytics';
+import Integration from './pages/Integration';
 import './App.css';
 export default function App() {
   const [token, setToken]=useState(localStorage.getItem('token')||'');
@@ -26,6 +27,7 @@ export default function App() {
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
           <Link to="/returns" className="nav-link">Returns</Link>
           <Link to="/analytics" className="nav-link">Analytics</Link>
+          <Link to="/integration" className="nav-link">Integration</Link>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </nav>
         <main className="main-content">
@@ -33,6 +35,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/returns" element={<Returns/>}/>
             <Route path="/analytics" element={<Analytics/>}/>
+            <Route path="/integration" element={<Integration/>}/>
             <Route path="*" element={<Navigate to="/dashboard"/>}/>
           </Routes>
         </main>
