@@ -1,6 +1,10 @@
 # Return Fraud Detection System
 
-A merchant-facing platform that scores every e-commerce return request for fraud likelihood using a rule-based scoring engine with an ML toggle, real-time WebSocket alerts, and a fraud cluster graph.
+A merchant-facing SaaS platform designed to score inbound e-commerce return requests for fraud likelihood. The system operates entirely as a background API engine, intercepting merchant webhooks and assessing risk across an array of historical metadata points.
+
+At a high level, the system implements a Data Enrichment Pipeline. It does not blindly trust frontend payloads. When a webhook is received containing only a user ID and an order ID, the engine securely queries its internal database to extract deep historical vectors—such as the user's return velocity over the past 30 days, account creation age, address clustering, and shared device fingerprints.
+
+These enriched signals are then fed into a dual-layer scoring matrix (swappable between an OOP Rule-Based Strategy and a Python Machine Learning model). The matrix instantly returns a REST response indicating whether the return should be auto-approved, flagged for manual review, or forcefully rejected.
 
 ## Architecture
 
@@ -147,3 +151,15 @@ Copy `backend/.env.example` and configure:
 | PORT | Backend server port |
 | CLIENT_URL | Frontend URL for CORS |
 | REDIS_URL | Redis connection for Bull queue |
+
+## Limitations
+
+* **Serverless Sockets:** Because the Node.js backend is configured to be deployable on serverless functions, long-polling WebSocket connections (Socket.io) are disabled in production to prevent timeout spam and boot crashes. Real-time dashboard alerts are only active locally or degrade to manual refresh on serverless deployments.
+* **Payload Sandboxing:** The platform currently relies on a seeded MongoDB database. A live retail integration requires a persistent data-tunnel.
+
+## Future Scope
+
+* **One-Click Integration Wrapper:** Creating a plugin that automatically registers eCommerce webhooks onto the ingest endpoints so merchants do not have to write custom integration scripts.
+* **Dedicated Data Ingestion API:** Expanding the backend to include persistent order synchronization endpoints, acting identically to standard payment provider API models to mirror retail databases in real-time.
+* **Containerized Deployment Migration:** Shifting the Express backend from a serverless environment to a persistent cloud container to restore global WebSocket Alert functionality.
+* **Live ML Re-Training Pipeline:** Automating a background cron-job that continually pulls manually overridden frontend return decisions to automatically re-train the Python ML model weights.
