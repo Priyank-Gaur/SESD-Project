@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import api from '../services/api';
 import socket from '../socket/socket';
 import AlertBanner from '../components/AlertBanner';
+import {Link} from 'react-router-dom';
 export default function Dashboard() {
   const [stats, setStats]=useState(null);
   const [strategy, setStrategy]=useState('rule-based');
@@ -42,7 +43,18 @@ export default function Dashboard() {
         <button className="btn btn-primary" onClick={toggleStrategy}>{strategy==='rule-based'?'Rule-Based':'ML Model'}</button>
         <span className="toggle-label">(click to switch)</span>
       </div>
-      {stats&&(
+      {stats && stats.totalReturns === 0 ? (
+        <div style={{textAlign: 'center', padding: '60px 20px', background: 'var(--card-bg)', borderRadius: '20px', border: '1px dashed var(--border-color)', marginTop: '20px'}}>
+          <h2 style={{fontSize: '24px', marginBottom: '16px', color: 'var(--text-main)'}}>Welcome to Fraud Shield! 🚀</h2>
+          <p style={{color: 'var(--text-dim)', marginBottom: '32px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.6'}}>
+            Your organization dashboard is currently empty because we haven't received any Return Webhooks yet. 
+            To see the AI Engine in action immediately, head over to the <b>Integration Sandbox</b> to simulate an incoming return request.
+          </p>
+          <Link to="/integration" className="btn btn-primary" style={{padding: '14px 28px', fontSize: '16px'}}>
+            Go to Integration Sandbox
+          </Link>
+        </div>
+      ) : stats && (
         <div className="stats-grid">
           <div className="stat-card">
             <h3>Total Returns</h3>

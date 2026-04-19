@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {BrowserRouter, Routes, Route, Navigate, Link} from 'react-router-dom';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Returns from './pages/Returns';
 import Analytics from './pages/Analytics';
@@ -8,6 +9,8 @@ import Integration from './pages/Integration';
 import './App.css';
 export default function App() {
   const [token, setToken]=useState(localStorage.getItem('token')||'');
+  const [showSignup, setShowSignup]=useState(false);
+
   const handleLogin=(newToken)=>{
     setToken(newToken);
     localStorage.setItem('token', newToken);
@@ -17,7 +20,10 @@ export default function App() {
     localStorage.removeItem('token');
   };
   if (!token) {
-    return <Login onLogin={handleLogin}/>;
+    if (showSignup) {
+      return <Signup onLogin={handleLogin} onToggleMode={()=>setShowSignup(false)}/>;
+    }
+    return <Login onLogin={handleLogin} onToggleMode={()=>setShowSignup(true)}/>;
   }
   return (
     <BrowserRouter>

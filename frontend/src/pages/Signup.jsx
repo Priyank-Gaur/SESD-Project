@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import api from '../services/api';
 
-export default function Login({onLogin, onToggleMode}) {
+export default function Signup({onLogin, onToggleMode}) {
+  const [name, setName]=useState('');
   const [email, setEmail]=useState('');
   const [password, setPassword]=useState('');
   const [error, setError]=useState('');
@@ -12,22 +13,10 @@ export default function Login({onLogin, onToggleMode}) {
     setLoading(true);
     setError('');
     try {
-      const res=await api.post('/auth/login', {email, password});
+      const res=await api.post('/auth/register', {name, email, password, role: 'merchant'});
       onLogin(res.data.token);
     } catch (err) {
-      setError(err.response?.data?.error||'Login failed');
-    }
-    setLoading(false);
-  };
-
-  const handleDemoLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const res=await api.post('/auth/login', {email: 'merchant1@store.com', password: 'password123'});
-      onLogin(res.data.token);
-    } catch (err) {
-      setError('Demo account unavailable or offline.');
+      setError(err.response?.data?.error||'Registration failed');
     }
     setLoading(false);
   };
@@ -37,12 +26,22 @@ export default function Login({onLogin, onToggleMode}) {
       <div className="login-card">
         <div className="login-header">
           <h1 className="login-title">Fraud Shield</h1>
-          <p className="login-subtitle">Advanced Return Fraud Detection</p>
+          <p className="login-subtitle">Create Merchant Account</p>
         </div>
         
         {error && <div className="error-alert">{error}</div>}
         
         <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label>Organization Name</label>
+            <input 
+              type="text" 
+              value={name} 
+              onChange={e=>setName(e.target.value)} 
+              placeholder="Acme Corp"
+              required
+            />
+          </div>
           <div className="form-group">
             <label>Email Address</label>
             <input 
@@ -63,18 +62,13 @@ export default function Login({onLogin, onToggleMode}) {
               required
             />
           </div>
-          <div style={{display: 'flex', gap: '10px', marginTop: '10px'}}>
-            <button type="submit" disabled={loading} className="btn btn-primary login-btn" style={{flex: 1}}>
-              {loading ? 'Authenticating...' : 'Sign In'}
-            </button>
-            <button type="button" disabled={loading} onClick={handleDemoLogin} className="btn login-btn" style={{flex: 1, backgroundColor: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-main)'}}>
-              Try Live Demo
-            </button>
-          </div>
+          <button type="submit" disabled={loading} className="btn btn-primary login-btn">
+            {loading ? 'Registering...' : 'Create Account'}
+          </button>
         </form>
         
         <div className="login-footer">
-          Don't have an account? <span style={{color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold'}} onClick={onToggleMode}>Sign Up</span>
+          Already have an account? <span style={{color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold'}} onClick={onToggleMode}>Sign In</span>
         </div>
       </div>
     </div>
